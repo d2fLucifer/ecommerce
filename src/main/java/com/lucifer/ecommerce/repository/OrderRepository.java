@@ -19,5 +19,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "FROM Order o", nativeQuery = true)
     List<OrderDto> findAllOrderInformation();
 
+    Order findOrderById(String id);
 
 }
