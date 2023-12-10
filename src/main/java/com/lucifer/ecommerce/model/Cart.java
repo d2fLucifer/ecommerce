@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -21,11 +22,14 @@ public class Cart {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @OneToMany(mappedBy = "cart")
-    private List<User> users;
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private User user;
     @ManyToMany
     @JoinTable(name = "cart_product",
             inverseJoinColumns = @JoinColumn(name = "product_id"),
             joinColumns = @JoinColumn(name = "cart_id"))
     private List<Product> products;
+    @Column(name = "last_updated")
+    private Date lastUpdated;
+
 }

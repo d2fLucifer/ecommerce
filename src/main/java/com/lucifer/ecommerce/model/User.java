@@ -45,8 +45,7 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Order> orders;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
+  @OneToOne(mappedBy = "user")
     private Cart cart;
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
