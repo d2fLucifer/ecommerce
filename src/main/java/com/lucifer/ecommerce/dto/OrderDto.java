@@ -1,23 +1,22 @@
 package com.lucifer.ecommerce.dto;
 
-import com.lucifer.ecommerce.model.PaymentMethod;
-import com.lucifer.ecommerce.model.Status;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class OrderDto {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private Date orderDate;
-    private Status status;
-    private PaymentMethod paymentMethod;
+    @NotEmpty(message = "userId should not bn empty")
+    private String userId;
+    @NotEmpty(message = "Products should not be empty ")
+    private List<ProductDto> products;
+
+
 }

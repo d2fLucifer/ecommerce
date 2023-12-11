@@ -1,7 +1,6 @@
 package com.lucifer.ecommerce.Service;
 
 import com.lucifer.ecommerce.dto.PaymentDTO;
-import com.lucifer.ecommerce.dto.Response.PaymentResponse;
 import com.lucifer.ecommerce.model.Payment;
 
 public interface PaymentService {
@@ -11,5 +10,5 @@ public interface PaymentService {
 
     void deletePayment(String paymentId);
 
-    PaymentResponse getPaymentById(String id);
+    PaymentDTO getPaymentById(String id);
 }
