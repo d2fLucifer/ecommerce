@@ -5,13 +5,13 @@ import com.lucifer.ecommerce.dto.Response.ProductResponse;
 import com.lucifer.ecommerce.model.Product;
 
 public interface ProductService {
-    ProductDto createProduct(Product product);
+    ProductDto createProduct(ProductDto productDto);
 
     ProductDto updateProduct(ProductDto productDto, String id);
 
     void deleteProductById(String id);
 
-    ProductResponse getProductById(String id);
+    ProductDto getProductById(String id);
 
-    ProductResponse getAllProducts();
+    ProductResponse getAllProducts(int pageNo, int pageSize, String sortBy, String sortDir);
 }
