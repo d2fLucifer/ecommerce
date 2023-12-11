@@ -1,6 +1,5 @@
 package com.lucifer.ecommerce.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +22,7 @@ public class Product {
     private String id;
     private String name;
     private String description;
-    private Long price;
+    private long price;
     @Column(name = "quantity_in_stock")
     private double quantityInStock;
     @ManyToMany
@@ -42,7 +41,7 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "variation_id"),
             joinColumns = @JoinColumn(name = "product_id"))
     private List<Variation> variations;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "category_id")
     private Category category;
 
