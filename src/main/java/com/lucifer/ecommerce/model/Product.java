@@ -24,7 +24,6 @@ public class Product {
     private String name;
     private String description;
     private Long price;
-    @JsonProperty("quantity_in_stock")
     @Column(name = "quantity_in_stock")
     private double quantityInStock;
     @ManyToMany

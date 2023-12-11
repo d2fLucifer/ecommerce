@@ -1,7 +1,7 @@
 package com.lucifer.ecommerce.Service;
 
-import com.lucifer.ecommerce.dto.Response.VariationResponse;
 import com.lucifer.ecommerce.dto.VariationDto;
+import com.lucifer.ecommerce.model.Variation;
 
 public interface VariationService {
     VariationDto createVariation(VariationDto variationDto);
@@ -10,8 +10,8 @@ public interface VariationService {
 
     void deleteVariationById(String id);
 
-    VariationResponse findAllVariation();
+    VariationDto findAllVariation();
 
-    VariationResponse findVariationById(String id);
+    VariationDto findVariationById(String id);
 
 }
