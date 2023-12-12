@@ -28,12 +28,28 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto createProduct(ProductDto productDto) {
+        // Map the ProductDto to a Product entity
         Product product = genericMapper.map(productDto, Product.class);
-        List<Variation> variations = genericMapper.mapList(productDto.getVariations(), Variation.class);
-        product.setVariations(variations);
+
+        // Map and set the variations if they are not null in productDto
+        if (productDto.getVariations() != null) {
+            List<Variation> variations = genericMapper.mapList(productDto.getVariations(), Variation.class);
+            product.setVariations(variations);
+        }
+
+        // Map and set the category if it's not null in productDto
+        if (productDto.getCategory() != null) {
+            Category category = genericMapper.map(productDto.getCategory(), Category.class);
+            product.setCategory(category);
+        }
+
+        // Save the product
         Product savedProduct = productRepository.save(product);
+
+        // Map and return the saved product as ProductDto
         return genericMapper.map(savedProduct, ProductDto.class);
     }
+
 
     @Override
     public ProductDto updateProduct(ProductDto productDto, String id) {
@@ -44,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(product.getPrice());
         product.setQuantityInStock(productDto.getQuantityInStock());
         product.setCategory(genericMapper.map(productDto.getCategory(), Category.class));
+        product.setImage(productDto.getImage());
         if (productDto.getVariations() != null)
             product.setVariations(genericMapper.mapList(productDto.getVariations(), Variation.class));
 

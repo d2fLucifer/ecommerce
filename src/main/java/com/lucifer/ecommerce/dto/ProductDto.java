@@ -1,8 +1,10 @@
 package com.lucifer.ecommerce.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lucifer.ecommerce.model.Category;
 import com.lucifer.ecommerce.model.Variation;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,18 +19,20 @@ public class ProductDto {
     @NotEmpty(message = "Name should not be empty")
     private String name;
 
-    @NotEmpty(message = "Price should not be empty")
+    @NotNull(message = "Price should not be empty")
     private long price;
 
     @NotEmpty(message = "Description should not be empty")
     private String description;
 
-    @NotEmpty(message = "Quantity of products  should not be empty")
+    @NotNull(message = "Quantity of products  should not be empty")
     @JsonProperty("quantity_in_stock")
     private double quantityInStock;
 
-    @NotEmpty(message = "Category should not be empty")
-    private String category;
+    @NotNull(message = "Image of products  should not be empty")
+   private   String image;
+
+    private CategoryDto category;
 
     private List<VariationDto> variations;
 
