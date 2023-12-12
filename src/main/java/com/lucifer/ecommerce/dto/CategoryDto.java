@@ -1,6 +1,7 @@
 package com.lucifer.ecommerce.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CategoryDto {
     private String id;
-    @NotEmpty(message = "Name of categories should not be empty")
+    @NotNull(message = "Name of categories should not be empty")
     private String name;
 }
