@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,8 +46,13 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
 
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
 }

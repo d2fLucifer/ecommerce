@@ -2,6 +2,7 @@ package com.lucifer.ecommerce.Service.Impl;
 
 import com.lucifer.ecommerce.Service.CartService;
 import com.lucifer.ecommerce.dto.CartDto;
+import com.lucifer.ecommerce.dto.ProductDto;
 import com.lucifer.ecommerce.exception.ResourceNotFoundException;
 import com.lucifer.ecommerce.model.Cart;
 import com.lucifer.ecommerce.model.Product;
@@ -28,19 +29,27 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto addProductToCart(CartDto cartDto) {
+    public CartDto addProductToCart(CartDto cartDto, Long productId) {
         Cart cart = cartRepository.findByUserId(cartDto.getUserId())
                 .orElseGet(() -> createNewCart(cartDto.getUserId()));
 
-        Product product = productRepository.findById(cartDto.getProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found", "ID", cartDto.getProductId()));
+        if (productId == null) {
+            // Handle the case where productId is null, throw an exception or return an appropriate response.
+            throw new IllegalArgumentException("Product ID must not be null");
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found", "ID", productId));
 
         cart.getProducts().add(product);
         product.getCarts().add(cart);
 
         cartRepository.save(cart);
-        return genericMapper.map(cart, CartDto.class);
+        CartDto map = genericMapper.map(cart, CartDto.class);
+        map.getProducts().add(genericMapper.map(product, ProductDto.class));
+        return map;
     }
+
 
     private Cart createNewCart(Long userId) {
         User user = userRepository.findById(userId)
@@ -100,8 +109,6 @@ public class CartServiceImpl implements CartService {
             throw new ResourceNotFoundException("Product not found in cart", "Product ID", productId);
         }
     }
-
-
 
 
     @Override

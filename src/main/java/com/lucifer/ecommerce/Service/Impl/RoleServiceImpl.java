@@ -2,6 +2,7 @@ package com.lucifer.ecommerce.Service.Impl;
 
 import com.lucifer.ecommerce.Service.RoleService;
 import com.lucifer.ecommerce.dto.RoleDto;
+import com.lucifer.ecommerce.dto.UserDto;
 import com.lucifer.ecommerce.exception.ResourceAlreadyExitException;
 import com.lucifer.ecommerce.exception.ResourceNotFoundException;
 import com.lucifer.ecommerce.model.Role;
@@ -39,14 +40,27 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
         role.setRole(roleDto.getRole());
 
-        return genericMapper.map(roleRepository.save(role), RoleDto.class);
+
+        RoleDto map = genericMapper.map(roleRepository.save(role), RoleDto.class);
+        map.getUserDtos().addAll(genericMapper.mapList(role.getUsers(), UserDto.class));
+        return map;
     }
 
     @Override
     public List<RoleDto> getAllRoles() {
+        List<Role> roles = roleRepository.findAll();
+        List<RoleDto> roleDtos = genericMapper.mapList(roles, RoleDto.class);
 
-        return genericMapper.mapList(roleRepository.findAll(), RoleDto.class);
+
+        roleDtos.forEach(roleDto -> {
+            List<User> source = userRepository.findByRole(genericMapper.map(roleDto, Role.class)).get();
+            List<UserDto> userDtos = genericMapper.mapList(source, UserDto.class);
+            roleDto.setUserDtos(userDtos);
+        });
+
+        return roleDtos;
     }
+
 
     @Transactional
     @Override

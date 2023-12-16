@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,12 +26,12 @@ public class Product {
     private long price;
     @Column(name = "quantity_in_stock")
     private double quantityInStock;
-   private String image;
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private String image;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "cart_product",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "cart_id"))
-    private List<Cart> carts;
+    private List<Cart> carts = new ArrayList<>();
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "product_review",
             joinColumns = @JoinColumn(name = "product_id"),

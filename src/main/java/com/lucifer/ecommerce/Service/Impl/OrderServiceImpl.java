@@ -3,6 +3,7 @@ package com.lucifer.ecommerce.Service.Impl;
 import com.lucifer.ecommerce.Service.OrderService;
 import com.lucifer.ecommerce.dto.OrderDto;
 import com.lucifer.ecommerce.dto.ProductDto;
+import com.lucifer.ecommerce.dto.UserDto;
 import com.lucifer.ecommerce.exception.ResourceNotFoundException;
 import com.lucifer.ecommerce.model.*;
 import com.lucifer.ecommerce.repository.OrderRepository;
@@ -44,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         order.setPayment(payment);
         order.setStatus(Status.PENDING);
 
-        // Set order date to the current date
+
         order.setOrderDate(new java.sql.Date(System.currentTimeMillis()));
 
         // Retrieve products and handle empty list scenario
@@ -59,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
         products.forEach(product -> product.getOrders().add(order));
         order.setProducts(new ArrayList<>());
         order.getProducts().addAll(products);
+        order.setUser(user);
         Order savedOrder = orderRepository.save(order);
         productRepository.saveAll(products);
 
@@ -68,7 +70,9 @@ public class OrderServiceImpl implements OrderService {
         user.getOrders().add(order);
         userRepository.save(user);
 
-        return genericMapper.map(savedOrder, OrderDto.class);
+        OrderDto map = genericMapper.map(savedOrder, OrderDto.class);
+        map.setUserDto(genericMapper.map(savedOrder.getUser(), UserDto.class));
+        return map;
     }
 
 
@@ -81,7 +85,9 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(orderDto.getStatus());
         orderRepository.save(order);
 
-        return genericMapper.map(order, OrderDto.class);
+        OrderDto map = genericMapper.map(order, OrderDto.class);
+        map.setUserDto(genericMapper.map(order.getUser(), UserDto.class));
+        return map;
     }
 
     @Override
@@ -90,21 +96,25 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
-
+        // Remove the order from each associated product
         order.getProducts().forEach(product -> {
             product.getOrders().removeIf(orderInProduct -> orderInProduct.getId().equals(order.getId()));
+            // Explicit save may not be necessary in a transactional context
+            productRepository.save(product);
         });
 
-
-        order.getPayment().getOrders().remove(order);
-
-
-        productRepository.saveAll(order.getProducts());
-        paymentRepository.save(order.getPayment());
-
-
+        // Check if the order has a payment and remove the order from it
+        if (order.getPayment() != null) {
+            order.getPayment().getOrders().remove(order);
+            // Explicit save may not be necessary
+            paymentRepository.save(order.getPayment());
+        }
+        if (order.getUser() != null) {
+            order.getUser().getOrders().remove(order);
+            userRepository.save(order.getUser());
+        }
         // Delete the order
-        orderRepository.deleteById(orderId);
+        orderRepository.delete(order);
     }
 
 
@@ -112,18 +122,43 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto findOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", id));
-        return genericMapper.map(order, OrderDto.class);
+        OrderDto map = genericMapper.map(order, OrderDto.class);
+        map.setUserDto(genericMapper.map(order.getUser(), UserDto.class));
+        return map;
     }
 
     @Override
     public List<OrderDto> findOrdersByUserId(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-        return genericMapper.mapList(orders, OrderDto.class);
+
+        List<OrderDto> collect = orders.stream()
+                .map(order -> genericMapper.map(order, OrderDto.class))
+                .collect(Collectors.toList());
+
+        collect.forEach(orderDto -> {
+            orders.forEach(order -> {
+                if (order.getId().equals(orderDto.getId())) {
+                    orderDto.setUserDto(genericMapper.map(order.getUser(), UserDto.class));
+                }
+            });
+        });
+
+        return collect;
     }
+
 
     @Override
     public List<OrderDto> findAllOrders() {
-        return genericMapper.mapList(orderRepository.findAll(), OrderDto.class);
+        List<Order> allOrders = orderRepository.findAll();
+        return allOrders.stream()
+                .map(order -> {
+                    OrderDto orderDto = genericMapper.map(order, OrderDto.class);
+                    orderDto.setUserDto(genericMapper.map(order.getUser(), UserDto.class));
+                    return orderDto;
+                })
+                .collect(Collectors.toList());
     }
+
+
 }

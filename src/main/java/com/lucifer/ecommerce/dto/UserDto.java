@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDto {
 
-    private Long userId;
+    private Long id;
     @JsonProperty("first_name")
     @NotEmpty(message = "first name should not be empty")
 

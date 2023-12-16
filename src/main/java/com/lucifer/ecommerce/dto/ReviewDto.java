@@ -19,9 +19,7 @@ public class ReviewDto {
     private String body;
     @NotEmpty(message = "You should rate products before submit ")
     private int rating;
-    @NotEmpty(message = "UserId  should not be empty")
-    private Long userId;
-    private Date UpdatedDate;
-    private UserDto user;
     private Date date;
+    private UserDto user;
+    private Date UpdatedDate;
 }

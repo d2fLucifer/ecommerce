@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,4 +16,11 @@ public class RoleDto {
     @NotEmpty(message = "Role should not be empty")
     private String role;
     private List<UserDto> userDtos;
+
+    public List<UserDto> getUserDtos() {
+        if (userDtos == null) {
+            userDtos = new ArrayList<>();
+        }
+        return userDtos;
+    }
 }

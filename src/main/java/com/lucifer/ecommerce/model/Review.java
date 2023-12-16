@@ -31,6 +31,15 @@ public class Review {
     private Date date;
     @Column(name = "last_updated")
     private Date UpdatedDate;
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
     @ManyToMany(mappedBy = "reviews")
 
     private List<Product> products;

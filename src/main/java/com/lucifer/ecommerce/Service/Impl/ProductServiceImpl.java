@@ -3,6 +3,7 @@ package com.lucifer.ecommerce.Service.Impl;
 import com.lucifer.ecommerce.Service.ProductService;
 import com.lucifer.ecommerce.dto.ProductDto;
 import com.lucifer.ecommerce.dto.Response.ProductResponse;
+import com.lucifer.ecommerce.dto.VariationDto;
 import com.lucifer.ecommerce.exception.ResourceNotFoundException;
 import com.lucifer.ecommerce.model.Category;
 import com.lucifer.ecommerce.model.Product;
@@ -76,8 +77,18 @@ public class ProductServiceImpl implements ProductService {
         product.setQuantityInStock(productDto.getQuantityInStock());
         product.setCategory(genericMapper.map(productDto.getCategory(), Category.class));
         product.setImage(productDto.getImage());
-        if (productDto.getVariations() != null)
-            product.setVariations(genericMapper.mapList(productDto.getVariations(), Variation.class));
+        if (productDto.getVariations() != null) {
+            List<Long> variationIds = productDto.getVariations().stream()
+                    .map(VariationDto::getId)
+                    .collect(Collectors.toList());
+
+            List<Variation> variations = variationRepository.findAllById(variationIds);
+            product.getVariations().clear();
+            product.getVariations().addAll(variations);
+            variations.forEach(variation -> variation.getProducts().add(product));
+
+            variationRepository.saveAll(variations);
+        }
 
         Product updatedProduct = productRepository.save(product);
 
@@ -114,8 +125,6 @@ public class ProductServiceImpl implements ProductService {
         // Delete Product
         productRepository.delete(product);
     }
-
-
 
 
     @Override

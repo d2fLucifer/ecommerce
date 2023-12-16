@@ -27,7 +27,7 @@ public class VariationServiceImpl implements VariationService {
     public VariationDto createVariation(VariationDto variationDto) {
         Optional<Variation> exitVariations = variationRepository.findByVariationOption(variationDto.getVariationOption());
 
-        if (!exitVariations.isPresent()) {
+        if (exitVariations.isEmpty()) {
             System.out.println(variationDto);
             Variation savedVariation = variationRepository.save(genericMapper.map(variationDto, Variation.class));
             return genericMapper.map(savedVariation, VariationDto.class);
@@ -52,7 +52,7 @@ public class VariationServiceImpl implements VariationService {
         Variation variation = variationRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("Variation ", "id", id));
         List<Product> products = productRepository.findByVariationsId(id).orElse(null);
-        products.stream().forEach(product -> product.setVariations(null));
+        products.forEach(product -> product.getVariations().removeIf(variation1 -> variation1.getId().equals(id)));
         productRepository.saveAll(products);
         variationRepository.deleteById(id);
     }

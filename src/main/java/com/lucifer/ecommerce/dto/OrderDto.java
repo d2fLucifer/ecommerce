@@ -2,6 +2,7 @@ package com.lucifer.ecommerce.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lucifer.ecommerce.model.Status;
+import com.lucifer.ecommerce.model.User;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 public class OrderDto {
     private Long id;
-    private Long userId;
+    private UserDto userDto;
 
     @NotEmpty(message = "Products should not be empty ")
     private List<ProductDto> products;
@@ -27,4 +28,13 @@ public class OrderDto {
 
 
     private Status status;
+
+
+
+    public UserDto getUserDto() {
+        if (userDto == null) {
+            userDto = new UserDto(); // Instantiate a new UserDto if it is null
+        }
+        return userDto;
+    }
 }
