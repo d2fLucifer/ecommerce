@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VariationDto {
-    private String id;
+    private Long id;
 
     @Override
     public String toString() {

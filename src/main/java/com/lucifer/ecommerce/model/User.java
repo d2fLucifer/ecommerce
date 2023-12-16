@@ -1,12 +1,10 @@
 package com.lucifer.ecommerce.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
 
@@ -18,36 +16,37 @@ import java.util.List;
 @Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String email;
 
     @Column(name = "first_name")
-    @JsonProperty("first_name")
     private String firstName;
 
     @Column(name = "last_name")
-    @JsonProperty("last_name")
     private String lastName;
 
     String password;
 
     @Column(name = "mobile_phone")
-    @JsonProperty("mobile_phone")
-    private long mobilephone;
+    private String mobilephone;
 
+    // User entity
     @ManyToOne
     @JoinColumn(name = "role_id")
-    Role role;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Role role;
+
+
+    @OneToMany(fetch = FetchType.EAGER,
+            mappedBy = "user",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Order> orders;
 
-  @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
+
     private List<Review> reviews;
 
 }

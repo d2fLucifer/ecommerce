@@ -18,13 +18,10 @@ import java.util.List;
 
 public class Payment {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private String id;
-    @Enumerated(EnumType.STRING)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "payment_method")
-    private PaymentMethod paymentMethod;
+    private String paymentMethod;
     @OneToMany(mappedBy = "payment")
     private   List<Order> orders;
 }

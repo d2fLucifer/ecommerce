@@ -7,7 +7,10 @@ import com.lucifer.ecommerce.exception.ResourceNotFoundException;
 import com.lucifer.ecommerce.model.Category;
 import com.lucifer.ecommerce.model.Product;
 import com.lucifer.ecommerce.model.Variation;
+import com.lucifer.ecommerce.repository.CategoryRepository;
+import com.lucifer.ecommerce.repository.OrderRepository;
 import com.lucifer.ecommerce.repository.ProductRepository;
+import com.lucifer.ecommerce.repository.VariationRepository;
 import com.lucifer.ecommerce.utils.GenericMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,46 +21,58 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final GenericMapper genericMapper;
+    private final CategoryRepository categoryRepository;
+    private final OrderRepository orderRepository;
+    private final VariationRepository variationRepository;
 
     @Override
     @Transactional
-    public ProductDto createProduct(ProductDto productDto) {
-        // Map the ProductDto to a Product entity
+    public ProductDto createProduct(ProductDto productDto, Long categoryId) {
+        // Convert DTO to entity
         Product product = genericMapper.map(productDto, Product.class);
 
-        // Map and set the variations if they are not null in productDto
-        if (productDto.getVariations() != null) {
-            List<Variation> variations = genericMapper.mapList(productDto.getVariations(), Variation.class);
-            product.setVariations(variations);
-        }
+        // Handle variations
+        List<Variation> variations = productDto.getVariations().stream()
+                .map(variationDto -> {
+                    return variationRepository.findById(variationDto.getId())
+                            .orElseGet(() -> genericMapper.map(variationDto, Variation.class));
+                })
+                .collect(Collectors.toList());
+        product.setVariations(variations);
 
-        // Map and set the category if it's not null in productDto
-        if (productDto.getCategory() != null) {
-            Category category = genericMapper.map(productDto.getCategory(), Category.class);
-            product.setCategory(category);
-        }
+        // Link variations back to the product
+        variations.forEach(variation -> variation.getProducts().add(product));
 
-        // Save the product
+        // Set category
+        System.out.println(categoryId);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+        product.setCategory(category);
+
+        // Save the product (cascades to variations)
         Product savedProduct = productRepository.save(product);
 
-        // Map and return the saved product as ProductDto
+        // Return the saved product as DTO
         return genericMapper.map(savedProduct, ProductDto.class);
     }
 
 
     @Override
-    public ProductDto updateProduct(ProductDto productDto, String id) {
+    @Transactional
+
+    public ProductDto updateProduct(ProductDto productDto, Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product", "id", id)
         );
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
-        product.setPrice(product.getPrice());
+        product.setPrice(productDto.getPrice());
         product.setQuantityInStock(productDto.getQuantityInStock());
         product.setCategory(genericMapper.map(productDto.getCategory(), Category.class));
         product.setImage(productDto.getImage());
@@ -70,15 +85,41 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProductById(String id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product", "id", id)
-        );
-        productRepository.delete(product);
+    @Transactional
 
+
+    public void deleteProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+
+        // Handle Category
+        Category category = product.getCategory();
+        if (category != null) {
+            category.getProducts().remove(product);
+            categoryRepository.save(category);
+        }
+
+        // Handle Variations
+        List<Variation> variations = product.getVariations();
+        variations.forEach(variation -> variation.getProducts().remove(product));
+        variationRepository.saveAll(variations);
+
+        // Handle Orders
+        product.getOrders().forEach(order -> order.getProducts().remove(product));
+        orderRepository.saveAll(product.getOrders());
+
+        // Clear Variations from Product
+        product.getVariations().clear();
+
+        // Delete Product
+        productRepository.delete(product);
     }
 
+
+
+
     @Override
-    public ProductDto getProductById(String id) {
+    public ProductDto getProductById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product", "id", id)
         );
         return genericMapper.map(product, ProductDto.class);

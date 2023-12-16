@@ -4,15 +4,15 @@ import com.lucifer.ecommerce.dto.CartDto;
 
 public interface CartService {
 
-    CartDto createCart();
 
     CartDto addProductToCart(CartDto cartDto);
 
-    CartDto updateCart(CartDto cartDto);
 
-    void removeProductFromCart(String cartId, String productId);
+    void removeProductFromCart(Long cartId, Long productId);
 
-    CartDto getCartByUserId(String userId);
-    CartDto getCartById(String id);
+    CartDto getCartByUserId(Long userId);
+    CartDto getCartById(Long id);
 
+
+    void removeQuantityProductFromCart(Long cartId, Long productId);
 }

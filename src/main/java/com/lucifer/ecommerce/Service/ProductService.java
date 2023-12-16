@@ -2,16 +2,15 @@ package com.lucifer.ecommerce.Service;
 
 import com.lucifer.ecommerce.dto.ProductDto;
 import com.lucifer.ecommerce.dto.Response.ProductResponse;
-import com.lucifer.ecommerce.model.Product;
 
 public interface ProductService {
-    ProductDto createProduct(ProductDto productDto);
+    ProductDto createProduct(ProductDto productDto, Long categoryId);
 
-    ProductDto updateProduct(ProductDto productDto, String id);
+    ProductDto updateProduct(ProductDto productDto, Long id);
 
-    void deleteProductById(String id);
+    void deleteProductById(Long id);
 
-    ProductDto getProductById(String id);
+    ProductDto getProductById(Long id);
 
     ProductResponse getAllProducts(int pageNo, int pageSize, String sortBy, String sortDir);
 }

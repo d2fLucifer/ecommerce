@@ -22,7 +22,12 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), resourceNotFoundException.getMessage(), webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(ResourceAlreadyExitException.class)
 
+    public ResponseEntity<ErrorDetails> handleResourceAlreadyExitException(ResourceAlreadyExitException resourceAlreadyExitException, WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), resourceAlreadyExitException.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(EcomerceWebsiteApiError.class)
     public ResponseEntity<ErrorDetails> handleBlogAPIException(EcomerceWebsiteApiError exception,
                                                                WebRequest webRequest) {

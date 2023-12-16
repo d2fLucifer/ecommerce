@@ -1,16 +1,18 @@
 package com.lucifer.ecommerce.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto {
+public class RoleDto {
     private Long id;
-    @NotNull(message = "Name of categories should not be empty")
-    private String name;
+    @NotEmpty(message = "Role should not be empty")
+    private String role;
+    private List<UserDto> userDtos;
 }

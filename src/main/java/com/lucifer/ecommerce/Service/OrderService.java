@@ -1,15 +1,20 @@
 package com.lucifer.ecommerce.Service;
 
 import com.lucifer.ecommerce.dto.OrderDto;
-import com.lucifer.ecommerce.dto.Response.OrderResponse;
+
+import java.util.List;
 
 public interface OrderService {
-    OrderDto createOrder(OrderDto orderDto);
-    OrderDto updateOrder(OrderDto orderDto, String orderId);
-    void deleteOrder(String orderId);
-    OrderResponse getOrderById(String id);
+    OrderDto createOrder(OrderDto orderDto,Long userId);
 
+    OrderDto updateOrder(OrderDto orderDto, Long orderId );
 
+    void deleteOrder(Long orderId);
+
+    OrderDto findOrderById(Long id);
+    List<OrderDto> findOrdersByUserId(Long userid);
+
+    List<OrderDto> findAllOrders();
 
 
 }

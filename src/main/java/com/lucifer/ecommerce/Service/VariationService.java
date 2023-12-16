@@ -1,17 +1,18 @@
 package com.lucifer.ecommerce.Service;
 
 import com.lucifer.ecommerce.dto.VariationDto;
-import com.lucifer.ecommerce.model.Variation;
+
+import java.util.List;
 
 public interface VariationService {
     VariationDto createVariation(VariationDto variationDto);
 
-    VariationDto updateVariation(VariationDto variationDto, String id);
+    VariationDto updateVariation(VariationDto variationDto, Long id);
 
-    void deleteVariationById(String id);
+    void deleteVariationById(Long id);
 
-    VariationDto findAllVariation();
+    List<VariationDto> findAllVariation();
 
-    VariationDto findVariationById(String id);
+    VariationDto findVariationById(Long id);
 
 }
