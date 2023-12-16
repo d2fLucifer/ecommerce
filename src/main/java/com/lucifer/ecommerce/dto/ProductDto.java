@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDto {
-    private String id;
+    private Long id;
     @NotEmpty(message = "Name should not be empty")
     private String name;
 
@@ -30,7 +30,7 @@ public class ProductDto {
     private double quantityInStock;
 
     @NotNull(message = "Image of products  should not be empty")
-   private   String image;
+    private String image;
 
     private CategoryDto category;
 

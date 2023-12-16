@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -17,19 +18,29 @@ import java.util.List;
 @Table(name = "review")
 public class Review {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private int rating;
-    private String comment;
+    @Column(columnDefinition = "TEXT")
+    @Lob
+    private String body;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToMany
-    @JoinTable(name = "product_review",
-            inverseJoinColumns = @JoinColumn(name = "product_id"),
-            joinColumns = @JoinColumn(name = "review_id")
-    )
-    private List<Review> reviews;
+    @Column(name = "date_created")
+    private Date date;
+    @Column(name = "last_updated")
+    private Date UpdatedDate;
+    @ManyToMany(mappedBy = "reviews")
+
+    private List<Product> products;
+
+
+
+
+
+
+
+
+
 }

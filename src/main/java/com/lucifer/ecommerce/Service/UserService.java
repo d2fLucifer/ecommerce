@@ -2,12 +2,14 @@ package com.lucifer.ecommerce.Service;
 
 import com.lucifer.ecommerce.dto.UserDto;
 
+import java.util.List;
+
 public interface UserService {
-    UserDto createUser(UserDto userDto);
-    void deleteUserById( String id);
-    UserDto updateUserById(String id, UserDto userDto);
-    UserDto findAllUsers();
-    UserDto findUserById(String id);
+    UserDto register(UserDto userDto);
+    void deleteUserById( Long id);
+    UserDto updateUserById(Long id, UserDto userDto);
+    List<UserDto> findAllUsers();
+    UserDto findUserById(Long id);
 
 
 }

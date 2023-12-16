@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,12 +18,10 @@ import java.util.List;
 @Table(name = "role")
 public class Role {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private String id;
-    @Enumerated(EnumType.STRING)
-    private RoleE role;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String role;
     @OneToMany(mappedBy = "role")
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
+
 }

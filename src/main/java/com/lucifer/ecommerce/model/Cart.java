@@ -17,17 +17,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Cart {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
-    @ManyToMany
-    @JoinTable(name = "cart_product",
-            inverseJoinColumns = @JoinColumn(name = "product_id"),
-            joinColumns = @JoinColumn(name = "cart_id"))
+    @ManyToMany(cascade = CascadeType.ALL,mappedBy = "carts")
+
     private List<Product> products;
     @Column(name = "last_updated")
     private Date lastUpdated;

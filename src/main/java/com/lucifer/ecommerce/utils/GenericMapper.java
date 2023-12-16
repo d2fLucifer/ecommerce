@@ -24,7 +24,6 @@ public class GenericMapper {
         }
 
         T target = modelMapper.map(source, targetClass);
-        System.out.println(target);
 
         return target;
     }

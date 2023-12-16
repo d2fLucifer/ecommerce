@@ -3,12 +3,16 @@ package com.lucifer.ecommerce.Service;
 import com.lucifer.ecommerce.dto.PaymentDTO;
 import com.lucifer.ecommerce.model.Payment;
 
+import java.util.List;
+
 public interface PaymentService {
-    Payment createPayment();
+    PaymentDTO createPayment(PaymentDTO paymentDTO);
 
-    PaymentDTO updatePayment(PaymentDTO paymentDTO, String paymentId);
+    PaymentDTO updatePayment(PaymentDTO paymentDTO, Long paymentId);
 
-    void deletePayment(String paymentId);
+    void deletePayment(Long paymentId);
 
-    PaymentDTO getPaymentById(String id);
+    PaymentDTO getPaymentById(Long id);
+
+    List<PaymentDTO> findAllPayments();
 }
